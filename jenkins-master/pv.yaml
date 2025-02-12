@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp2-storage-class # Name of the StorageClass
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2 # AWS EBS volume type
+  fsType: ext4 # File system type
+  encrypted: "true" # Optional: Enable encryption
+  zones: us-east-1a
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer

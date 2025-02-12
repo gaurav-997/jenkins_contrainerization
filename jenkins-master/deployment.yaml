@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: default
+  labels:
+    app: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      serviceAccountName: jenkins # Attach the custom Service Account
+      securityContext: # Pod-level security context
+        runAsUser: 1000           # Use a non-root user ID
+        fsGroup: 1000             # Ensure the container's file system is accessible to this group
+      containers:
+      - name: jenkins
+        image: docker.io/jenkins/jenkins:jdk17
+        ports:
+        - name: httpport 
+          containerPort: 8080
+        - name: jnlpport
+          containerPort: 50000
+        volumeMounts:
+        - name: jenkins-home
+          mountPath: /var/jenkins_home
+      volumes:
+      - name: jenkins-home
+        persistentVolumeClaim:
+          claimName: jenkins-pvc
